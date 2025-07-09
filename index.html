@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <style>
     body { padding: 2rem; }
-    table input { width: 4ch; padding: 0.25rem; box-sizing: border-box; text-align: center; }
+    table input { width: 6ch; padding: 0.25rem; box-sizing: border-box; text-align: center; }
     .readonly { background: #eee; }
     .dice-container { margin-bottom: 1rem; }
     .die {
@@ -22,7 +22,7 @@
     .highlighted { background-color: #d4edda !important; }
     .log { font-size: 0.9em; margin-top: 0.5rem; }
     .column-label { width: 60px; }
-    .row-label { width: 120px; }
+    .row-label { width: 8ch; text-align: center; }
   </style>
 </head>
 <body>
@@ -170,7 +170,7 @@ function showWinner() {
     let filled = true;
     let total = 0;
     for (let c = 1; c <= 4; c++) {
-      const val = parseInt(document.getElementById(`p${p
+      const val = parseInt(document.getElementById(`p${p}_c${c}_total`).value);
       if (!isNaN(val)) total += val;
       else filled = false;
     }
@@ -193,51 +193,6 @@ function showWinner() {
   result.id = 'winnerAnnounce';
   result.innerText = `🏆 ${winnerName} vinner med ${highest} poäng!`;
   document.querySelector('.container').appendChild(result);
-}_c${c}_total`).value);
-      if (!isNaN(val)) total += val;
-      else filled = false;
-    }
-    if (!filled) allDone = false;
-    totals.push(total);
-    names.push(document.getElementById(`playerName${p}`).value || `Spelare ${p+1}`);
-  }
-
-  const existing = document.getElementById('winnerAnnounce');
-  if (existing) existing.remove();
-
-  if (!allDone) return;
-
-  let highest = Math.max(...totals);
-  let winnerIndex = totals.indexOf(highest);
-  let winnerName = names[winnerIndex];
-
-  const result = document.createElement('div');
-  result.className = 'alert alert-success mt-4';
-  result.id = 'winnerAnnounce';
-  result.innerText = `🏆 ${winnerName} vinner med ${highest} poäng!`;
-  document.querySelector('.container').appendChild(result);
-}_c${c}_total`).value);
-      if (!isNaN(val)) total += val;
-      else filled = false;
-    }
-    if (!filled) allDone = false;
-    totals.push(total);
-    names.push(document.getElementById(`playerName${p}`).value || `Spelare ${p+1}`);
-  }
-
-  if (!allDone) return;
-
-  let highest = Math.max(...totals);
-  let winnerIndex = totals.indexOf(highest);
-  let winnerName = names[winnerIndex];
-
-  if (!document.getElementById('winnerAnnounce')) {
-    const result = document.createElement('div');
-    result.className = 'alert alert-success mt-4';
-    result.id = 'winnerAnnounce';
-    result.innerText = `🏆 ${winnerName} vinner med ${highest} poäng!`;
-    document.querySelector('.container').appendChild(result);
-  }
 }
 function updatePlayerTurn() {
   document.querySelectorAll('.player-section').forEach((el, i) => {
