@@ -138,7 +138,7 @@ function toggleHold(index) {
   if (row === 9) {
     if (card[8] !== null && dice.reduce((a, b) => a + b, 0) <= card[8]) return alert("MAX måste vara högre än MIN om MIN redan är ifylld.");
   }
-      if ([6, 7, 14, 15, 16].includes(row)) return;
+      if ([6, 7, 15, 16].includes(row)) return;
 
       if (col === '1' && rollCount !== 1) return alert("I kolumn 1 får du bara föra in poäng efter första kastet.");
       if (col === '⬇') {
@@ -152,6 +152,22 @@ function toggleHold(index) {
       }
 
       if (card[row] !== null) return alert("Redan ifylld ruta.");
+
+  // Tillåt att sätta 0 manuellt efter tredje kastet
+  const wantsZero = ![6,7,14,15,16].includes(row) && rollCount === 3 && confirm(`Vill du sätta 0 i '${labels[row]}' i kolumn '${col}'?`);
+  if (wantsZero) {
+    card[row] = 0;
+    const cell = document.getElementById(`cell-${col}-${row}`);
+    cell.textContent = 0;
+    cell.classList.add("filled");
+    cell.onclick = null;
+    rollCount = 0;
+    held = [false, false, false, false, false];
+    document.getElementById("rollsLeft").textContent = 3;
+    renderDice();
+    updateTotals();
+    return;
+  }
 
       let val = 0;
       if (row >= 0 && row <= 5) val = dice.filter(d => d === row + 1).reduce((a, b) => a + b, 0);
