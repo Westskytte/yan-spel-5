@@ -118,6 +118,26 @@ function toggleHold(index) {
 }
 
     function handleClick(col, row) {
+  const card = col === 'L' ? colL : col === '⬇' ? colDown : col === '⬆' ? colUp : col1;
+  const maxVal = Math.max(...dice);
+
+  // Begränsning för MIN (rad 8)
+  if (row === 8) {
+    const minSum = dice.reduce((a, b) => a + b, 0);
+    if (minSum < 18) return alert("MIN kräver minst 18 poäng på tärningarna.");
+    if (card[9] !== null && minSum >= card[9]) return alert("MIN måste vara lägre än MAX om MAX redan är ifylld.");
+  }
+
+  // Begränsning för MAX (rad 9)
+  if (row === 9) {
+    const maxSum = dice.reduce((a, b) => a + b, 0);
+    if (card[8] !== null && maxSum <= card[8]) return alert("MAX måste vara högre än MIN om MIN redan är ifylld.");
+  }
+
+  // Begränsning för MAX (rad 9)
+  if (row === 9) {
+    if (card[8] !== null && dice.reduce((a, b) => a + b, 0) <= card[8]) return alert("MAX måste vara högre än MIN om MIN redan är ifylld.");
+  }
       if ([6, 7, 14, 15, 16].includes(row)) return;
 
       if (col === '1' && rollCount !== 1) return alert("I kolumn 1 får du bara föra in poäng efter första kastet.");
@@ -131,14 +151,13 @@ function toggleHold(index) {
         if (row !== nextRow) return alert("Följ tvingande ordning nedifrån (⬆).");
       }
 
-      const card = col === 'L' ? colL : col === '⬇' ? colDown : col === '⬆' ? colUp : col1;
       if (card[row] !== null) return alert("Redan ifylld ruta.");
 
       let val = 0;
       if (row >= 0 && row <= 5) val = dice.filter(d => d === row + 1).reduce((a, b) => a + b, 0);
-      else if (row === 8) val = Math.min(...dice);
-      else if (row === 9) val = Math.max(...dice);
-      else if (row === 10) val = hasTwoPairs() ? dice.reduce((a, b) => a + b, 0) : 0;
+      else if (row === 8) val = dice.reduce((a, b) => a + b, 0); // MIN
+      else if (row === 9) val = dice.reduce((a, b) => a + b, 0); // MAX
+      else if (row === 10) val = hasTwoPairs() ? dice.reduce((a, b) => a + b, 0) : 0; // 2 PAR
       else if (row === 11) val = hasFullHouse() ? 25 : 0;
       else if (row === 12) val = isStraight() ? 30 : 0;
       else if (row === 13) val = hasFourOfKind() ? 40 : 0;
