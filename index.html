@@ -167,7 +167,9 @@ function toggleHold(index) {
 
   for (const [col, arr] of Object.entries(allCols)) {
     const sum = arr.slice(0, 6).reduce((a, b) => a + (b || 0), 0);
-    const bonus = sum >= 60 ? 30 : 0;
+    let bonus = 0;
+    if (sum >= 70) bonus = 70;
+    else if (sum >= 60) bonus = 60;
     const min = arr[8] || 0;
     const max = arr[9] || 0;
     const mult = max - min;
@@ -270,4 +272,3 @@ function toggleHold(index) {
   </script>
 </body>
 </html>
-
