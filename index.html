@@ -118,20 +118,39 @@ function toggleHold(index) {
 }
 
     function handleClick(col, row) {
+  if (rollCount === 0) {
+    alert("Du måste kasta tärningarna minst en gång innan du kan föra in poäng.");
+    return;
+  }
   const card = col === 'L' ? colL : col === '⬇' ? colDown : col === '⬆' ? colUp : col1;
   const maxVal = Math.max(...dice);
 
   // Begränsning för MIN (rad 8)
   if (row === 8) {
     const minSum = dice.reduce((a, b) => a + b, 0);
-    if (minSum < 18) return alert("MIN kräver minst 18 poäng på tärningarna.");
-    if (card[9] !== null && minSum >= card[9]) return alert("MIN måste vara lägre än MAX om MAX redan är ifylld.");
+    if (minSum < 18) {
+      if (rollCount !== 3) return alert("MIN kräver minst 18 poäng på tärningarna.");
+      const confirmZero = confirm(`Du har under 18 poäng. Vill du sätta 0 i 'MIN' i kolumn '${col}'?`);
+      if (!confirmZero) return;
+      card[row] = 0;
+      const cell = document.getElementById(`cell-${col}-${row}`);
+      cell.textContent = 0;
+      cell.classList.add("filled");
+      cell.onclick = null;
+      rollCount = 0;
+      held = [false, false, false, false, false];
+      document.getElementById("rollsLeft").textContent = 3;
+      renderDice();
+      updateTotals();
+      return;
+    }
+    if (card[9] !== null && minSum >= card[9] && rollCount !== 3) return alert("MIN måste vara lägre än MAX om MAX redan är ifylld.");
   }
 
   // Begränsning för MAX (rad 9)
   if (row === 9) {
     const maxSum = dice.reduce((a, b) => a + b, 0);
-    if (card[8] !== null && maxSum <= card[8]) return alert("MAX måste vara högre än MIN om MIN redan är ifylld.");
+    if (card[8] !== null && maxSum <= card[8] && rollCount !== 3) return alert("MAX måste vara högre än MIN om MIN redan är ifylld.");
   }
 
   // Begränsning för MAX (rad 9)
@@ -154,19 +173,19 @@ function toggleHold(index) {
       if (card[row] !== null) return alert("Redan ifylld ruta.");
 
   // Tillåt att sätta 0 manuellt efter tredje kastet
-  const wantsZero = ![6,7,14,15,16].includes(row) && rollCount === 3 && confirm(`Vill du sätta 0 i '${labels[row]}' i kolumn '${col}'?`);
-  if (wantsZero) {
-    card[row] = 0;
-    const cell = document.getElementById(`cell-${col}-${row}`);
-    cell.textContent = 0;
-    cell.classList.add("filled");
-    cell.onclick = null;
-    rollCount = 0;
-    held = [false, false, false, false, false];
-    document.getElementById("rollsLeft").textContent = 3;
-    renderDice();
-    updateTotals();
-    return;
+  if ((col === '1' && rollCount === 1) || (rollCount === 3)) {
+    let val = 0;
+    if (row >= 0 && row <= 5) val = dice.filter(d => d === row + 1).reduce((a, b) => a + b, 0);
+    else if (row === 8 || row === 9) val = dice.reduce((a, b) => a + b, 0);
+    else if (row === 10) val = hasTwoPairs() ? dice.reduce((a, b) => a + b, 0) : 0;
+    else if (row === 11) val = hasFullHouse() ? 25 : 0;
+    else if (row === 12) val = isStraight() ? 30 : 0;
+    else if (row === 13) val = hasFourOfKind() ? 40 : 0;
+    else if (row === 14) val = hasYan() ? 50 : 0;
+
+    const confirmSet = confirm(`Du kan få ${val} poäng i '${labels[row]}' i kolumn '${col}'.
+Tryck OK för att sätta ${val} eller Avbryt för att återgå.`);
+    if (!confirmSet) return;
   }
 
       let val = 0;
