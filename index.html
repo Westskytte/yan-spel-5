@@ -161,7 +161,7 @@ function toggleHold(index) {
 
       if (col === '1' && rollCount !== 1) return alert("I kolumn 1 får du bara föra in poäng efter första kastet.");
       if (col === '⬇') {
-        const nextRow = colDown.findIndex((v, i) => v === null && i >= 0 && i <= 13);
+        const nextRow = colDown.findIndex((v, i) => v === null && i >= 0 && i <= 14);
         if (row !== nextRow) return alert("Följ tvingande ordning uppifrån (⬇).");
       }
       if (col === '⬆') {
